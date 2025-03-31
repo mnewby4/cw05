@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+MaterialColor newColor = Colors.red;
 void main() {
   runApp(const MyApp());
 }
@@ -27,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class Fish {
-  String fishColor; 
+  MaterialColor fishColor; 
   String fishSpeed; 
 
   Fish(this.fishColor, this.fishSpeed);
@@ -52,7 +53,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void _addFish() {
     if (fishList.length < 10) {
       setState(() {
-        Fish fish = Fish(_color, _speed);
+        if (_color == "Yellow") {
+          newColor = Colors.yellow;
+        } else if (_color == "Blue") {
+          newColor = Colors.blue; 
+        } else {
+          newColor = Colors.red;
+        }
+        Fish fish = Fish(newColor, _speed);
         fishList.add(fish);
       });
     }
@@ -143,7 +151,7 @@ class MyPainter extends CustomPainter { //logic for how to add lines
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.yellow
+      ..color = newColor
       ..strokeWidth = 4
       ..style = PaintingStyle.fill;
   
