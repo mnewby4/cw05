@@ -26,14 +26,37 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class Fish {
+  String fishColor; 
+  String fishSpeed; 
+
+  Fish(this.fishColor, this.fishSpeed);
+}
+
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 0;
-  /*String _dropdownSpeed = speedList.first;
-  String _dropdownColor = colorList.first;*/
   List<String> speedList = ['Slow', 'Med', 'High'];
   List<String> colorList = ['Red', 'Blue', 'Yellow'];  
-  String? speed = 'Slow'; 
-  String? color = 'Red';
+  String _speed = 'Slow'; 
+  String _color = 'Red'; 
+  AnimationController? _controller;
+  List<Fish> fishList = [];
+
+  @override
+  void initState() {
+    _controller = AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    // Add your animation logic here.
+    super.initState();
+  }
+
+  void _addFish() {
+    if (fishList.length < 10) {
+      setState(() {
+        Fish fish = Fish(_color, _speed);
+        fishList.add(fish);
+      });
+    }
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -45,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       //save count, color, speed
     });
-  }
+  }  
 
   @override
   Widget build(BuildContext context) {
@@ -58,21 +81,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            /*Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),*/
             Container(
               width: 200,
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   icon: Icon(Icons.keyboard_arrow_down, size: 20),
-                  value: speed,
+                  value: _speed,
                   items: speedList.map((item) => DropdownMenuItem<String>(
                     value: item,
                     child: Text(item, style: TextStyle(fontSize: 12)),
                   )).toList(),
-                  onChanged: (item) => setState(() => speed = item),
+                  onChanged: (item) => setState(() => _speed = item!),
                 ),
               ),
             ),
@@ -81,12 +100,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   icon: Icon(Icons.keyboard_arrow_down, size: 20),
-                  value: color,
+                  value: _color,
                   items: colorList.map((item) => DropdownMenuItem<String>(
                     value: item,
                     child: Text(item, style: TextStyle(fontSize: 12)),
                   )).toList(),
-                  onChanged: (item) => setState(() => color = item),
+                  onChanged: (item) => setState(() => _color = item!),
                 ),
               ),
             ),
@@ -103,11 +122,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+
+            CustomPaint(
+              size: Size(50, 50), // Specify the size of the custom painting area
+              painter: MyPainter(), // Use a custom painter to define the drawing
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _addFish,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), 
@@ -115,21 +139,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-/*class MyPainter extends CustomPainter { //logic for how to add lines
+class MyPainter extends CustomPainter { //logic for how to add lines
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..color = Colors.yellow
       ..strokeWidth = 4
       ..style = PaintingStyle.fill;
-
-    final Paint paint2 = Paint()
-      ..color = Colors.brown // Set the color to green
-      ..strokeWidth = 1 // Set the stroke width
-      ..style = PaintingStyle.fill;
+  
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    canvas.drawCircle(center, radius, paint);
+  }
     
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
   }
-}*/
+}
